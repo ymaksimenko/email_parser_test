@@ -1,0 +1,11 @@
+<div class="row">
+    <div class="col-md">
+        <h1>Parsing results</h1>
+        <br>
+        <?php
+            foreach ($this->getViewParam('sites') as $item) {
+                echo "<p><a href=\"/index/viewpages?site={$item['_id']}\">{$item['site']}</a> email count {$item['count_email']}</p>";
+            }
+        ?>
+    </div>
+</div>

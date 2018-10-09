@@ -3,8 +3,7 @@
 namespace App\Controller;
 
 use App\Core\AbstractController;
-use App\Model\UrlParser;
-use App\Model\EmailParser;
+use App\Model\Parser;
 
 class ParseController extends AbstractController
 {
@@ -21,21 +20,27 @@ class ParseController extends AbstractController
         $url = trim($this->getRequest()->getPost('url'));
         $url =  filter_var($url, FILTER_VALIDATE_URL) ? $url : '';
 
-        $lavel = !empty($this->getRequest()->getPost('lavel')) ? (int) $this->getRequest()->getPost('lavel') : 0;
+        $lavel = (int) $this->getRequest()->getPost('lavel');
+        $max_count = (int) $this->getRequest()->getPost('max_count');
 
-        if (!empty($url)) {
-            $url_parser = new UrlParser();
-            $parse_urls = $url_parser->Parse($url, $lavel);
-
-            $email_parser = new EmailParser();
-            $result = $email_parser->Parse($parse_urls);
-
+        if (!empty($url) && $max_count > 0) {
+            $parser = new Parser();
+            $parse_result = $parser->LinearParserStart($url, $lavel, $max_count);
         }
 
-        $this->getViev()->setViewParam('email_list', $result);
-        $this->getViev()->setViewParam('email_count', count($result));
+        $db = Parser::getDB();
+
+        $sites = $db->sites->findOne(['site'=>$url]);
+        $pages = $db->site_pages->find();
+
+        $this->getViev()->setViewParam('sites', $sites);
+        $this->getViev()->setViewParam('pages', $pages);
+
+        $this->getViev()->setViewParam('link_count', $parse_result['link_count']);
+        $this->getViev()->setViewParam('email_count', $parse_result['email_count']);
         $this->getViev()->setViewParam('site', $url);
 
         $this->getViev()->render();
     }
+
 }

@@ -18,7 +18,13 @@ class Router
 
     public function Routing()
     {
-        $path_arr = explode('/', $_SERVER["REQUEST_URI"]);
+        $request_url = $_SERVER["REQUEST_URI"];
+        $param_pos = stripos($request_url,'?');
+        if ($param_pos !== false) {
+            $request_url = substr($request_url,0, $param_pos);
+        }
+
+        $path_arr = explode('/', $request_url);
 
         $this->controller = !empty($path_arr[1]) ? $path_arr[1] : 'index';
 

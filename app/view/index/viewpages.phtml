@@ -1,0 +1,35 @@
+<div class="row">
+    <div class="col-md">
+        <h1>Parsing results for site <?= $this->getViewParam('site')?></h1>
+        <br>
+        <?php
+            function showPages ($pages, $page_arr) {
+                echo "<ul style='list-style: none'>";
+                foreach ($pages as $item) {
+                    echo "<li><a href=\"{$item->link}\">{$item->link}</a></li>";
+                    echo "<li><ul>";
+                    if (!empty($item->email)) {
+                        foreach ($item->email as $mail) {
+                            echo "<li>{$mail}</li>";
+                        }
+                    }
+                    echo "</ul></li>";
+                    $child = array_filter($page_arr, function ($val) use ($item) {
+                        return $val->parent_link == $item->link;
+                    });
+
+                    if (!empty($child)) {
+                        echo "<li>";
+                        showPages($child, $page_arr);
+                        echo "</li>";
+                    }
+                }
+                echo "</ul>";
+                return;
+            }
+
+            $first = [$this->getViewParam('pages')[0]];
+            showPages($first,$this->getViewParam('pages'));
+        ?>
+    </div>
+</div>

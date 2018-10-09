@@ -8,15 +8,13 @@ use App\Core\Request;
 class AbstractController
 {
     private $viev;
-    private $controller_name;
-    private $action_name;
     private $request;
 
-
-    public function __construct($controller = 'index', $action = 'index')
+    public function __construct($controller = 'index', $action = 'index', $connector = null)
     {
         $this->request = new Request();
         $this->viev = new View($controller, $action);
+        $this->db_connector = $connector;
     }
 
     public function getViev()
@@ -28,5 +26,4 @@ class AbstractController
     {
         return $this->request;
     }
-
 }

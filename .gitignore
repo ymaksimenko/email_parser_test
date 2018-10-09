@@ -1,5 +1,5 @@
 .idea/
-app/config/*
-
+app/config/app_config.php
+vendor/
 # Composer
 composer.lock

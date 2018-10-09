@@ -1,14 +1,7 @@
 <div class="row">
     <div class="col-md">
         <h1>Parsing result</h1>
-        <h3>Site <a href="<?= $this->getViewParam('site') ?>" target="_blank"><?= $this->getViewParam('site') ?></a> emails count <?= $this->getViewParam('email_count') ?></h3>
+        <h3>Site <a href="<?= $this->getViewParam('site') ?>" target="_blank"><?= $this->getViewParam('site') ?></a> links count <?= $this->getViewParam('link_count') ?>, emails count <?= $this->getViewParam('email_count') ?></h3>
         <br>
-        <table>
-            <?php
-            foreach ($this->getViewParam('email_list') as $item) {
-                echo "<tr><td>{$item}</td></tr>";
-            }
-            ?>
-        </table>
     </div>
 </div>

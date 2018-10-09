@@ -1,6 +1,16 @@
 Mail parser
 
-Pars the mail from the site to the specified depth, and displays the result on the screen.
-The data is not saved anywhere.
+Парсит email со страниц указанного сайта на указанную глубину.
 
-To install and run, you just need to clone or download the project and configure the web server.
+
+Install
+
+Для работы требуется ext-mongodb: ^1.5.0
+
+1. Склонировать проект.
+2. Установить библиотеку PHP для MongoDB 
+
+$ composer require mongodb/mongodb
+
+3. Создать в MongoDB базу данных "email_parser"
+(коннект к базе сейчас не настраивается, используется стандартный "mongodb://localhost:27017")
