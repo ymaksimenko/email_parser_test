@@ -8,7 +8,6 @@ ini_set('display_startup_errors', 1);
 
 define('BASE_DIR', dirname(__DIR__));
 define("APP_PATH", BASE_DIR . "/app");
-$config = include APP_PATH.'/config/app_config.php';
 
 require BASE_DIR.'/vendor/autoload.php'; // include Composer's autoloader
 
