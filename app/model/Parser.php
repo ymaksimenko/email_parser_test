@@ -36,7 +36,7 @@ class Parser extends AbstractModel
     public function ParseDataFromPage($page_html_data, $data_type = 'email') {
         $result = [];
         $matches = [];
-
+        $host = parse_url($this->site, PHP_URL_SCHEME) . "://" . parse_url($this->site, PHP_URL_HOST);;
         switch ($data_type) {
             case 'email':
                 preg_match_all("/\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/", $page_html_data, $matches);
@@ -52,12 +52,12 @@ class Parser extends AbstractModel
                         // Ссылка не на текущую страницу и это не почта
                         if (!empty($link) && $link[0]  != '#' && stripos($link, 'mailto:') === false) {
                             // Ссылка абсолютная в переделах сканируемого сайта
-                            if (stripos($link, $this->site) === 0) {
+                            if (stripos($link, $host) === 0) {
                                 $url_ = $link;
                             } else {
                                 // Ссылка не ведет на внешний ресурс и она относительная
                                 if (preg_match("/^http|https/i", $link) === false) {
-                                    $url_ = $this->absoluteLink($this->site, $link);
+                                    $url_ = $this->absoluteLink($host, $link);
                                 }
                             }
                         }
@@ -77,13 +77,14 @@ class Parser extends AbstractModel
         if (!empty($site)) {
             $this->site = $site;
             $this->lavel = $lavel;
+            $this->complete_link_list[] = $site;
         }
         $result = [];
         $email_left = $max_count;
         $current_lavel_urls = [['link'=>$site, 'parent_link'=>null]];
 
         for ($i = 0; $i <= $lavel; $i++) {
-            $lavel_parse = $this->ParseLavel($current_lavel_urls, $email_left);
+            $lavel_parse = $this->ParseLavel($current_lavel_urls, $email_left, $i);
             $result[$i] = $lavel_parse['result'];
             $current_lavel_urls = $lavel_parse['next_lavel'];
             $email_left -= $lavel_parse['email_count'];
@@ -108,7 +109,7 @@ class Parser extends AbstractModel
         return ['link_count' => count($this->complete_link_list), 'email_count'=>count(array_unique($this->complete_email_list))];
     }
 
-    public function ParseLavel($lavel_urls, $mail_necessary)
+    public function ParseLavel($lavel_urls, $mail_necessary, $current_lavel)
     {
         $next_link_lavel = [];
         $count_parse = 0;
@@ -133,7 +134,7 @@ class Parser extends AbstractModel
                     $next_link_lavel = [];
                     break;
                 } else {
-                    if (!empty($result_parse['link'])) {
+                    if (!empty($result_parse['link']) && $current_lavel != $this->lavel) {
                         $unique_url = array_diff($result_parse['link'], $this->complete_link_list);
                         $this->complete_link_list = array_merge($this->complete_link_list, $unique_url);
                         foreach ($unique_url as $next_link) {
@@ -143,6 +144,7 @@ class Parser extends AbstractModel
                 }
             }
         }
+
         $result = ['result'=>$lavel_urls, 'email_count' => $count_parse, 'next_lavel'=>$next_link_lavel];
 
         return $result;
@@ -172,7 +174,7 @@ class Parser extends AbstractModel
         if(!preg_match("/^http:\/\//i", $link))
         {
             $link_ = ltrim($link ,"/");
-            $link_ = $site . $link_;
+            $link_ = $site . "/" . $link_;
         }
         return $link_;
     }

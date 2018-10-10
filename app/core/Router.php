@@ -18,17 +18,12 @@ class Router
 
     public function Routing()
     {
-        $request_url = $_SERVER["REQUEST_URI"];
-        $param_pos = stripos($request_url,'?');
-        if ($param_pos !== false) {
-            $request_url = substr($request_url,0, $param_pos);
-        }
+        $path = parse_url($_SERVER["REQUEST_URI"],PHP_URL_PATH);
+        $path_arr = explode('/', trim($path, '/'));
 
-        $path_arr = explode('/', $request_url);
+        $this->controller = !empty($path_arr[0]) ? $path_arr[0] : 'index';
 
-        $this->controller = !empty($path_arr[1]) ? $path_arr[1] : 'index';
-
-        $this->action = !empty($path_arr[2]) ? $path_arr[2] : 'index';
+        $this->action = !empty($path_arr[1]) ? $path_arr[1] : 'index';
 
         if ($this->controller !== 'Index' && array_key_exists($this->controller, $this->route)) {
             if (array_search($this->action, $this->route[$this->controller]['actions']) === false) {

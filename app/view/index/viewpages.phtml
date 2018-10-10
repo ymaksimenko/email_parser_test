@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-md">
-        <h1>Parsing results for site <?= $this->getViewParam('site')?></h1>
+        <h1>Parsing results for site</h1>
         <br>
         <?php
             function showPages ($pages, $page_arr) {
@@ -17,7 +17,6 @@
                     $child = array_filter($page_arr, function ($val) use ($item) {
                         return $val->parent_link == $item->link;
                     });
-
                     if (!empty($child)) {
                         echo "<li>";
                         showPages($child, $page_arr);
